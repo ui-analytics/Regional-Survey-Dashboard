@@ -1,0 +1,230 @@
+═══════════════════════════════════════════════════════════════════════
+  CHARLOTTE REGIONAL WELL-BEING DASHBOARD - QUICK START GUIDE
+═══════════════════════════════════════════════════════════════════════
+
+🎯 WHAT IS THIS?
+
+An interactive web dashboard that lets you explore the Charlotte Regional 
+Well-Being Survey data through charts, graphs, and filters. No coding 
+required - just click and explore!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 STEP 1: INSTALL PYTHON (if you don't have it)
+
+Windows:
+1. Go to python.org/downloads
+2. Download Python 3.11 or newer
+3. Run the installer
+4. ✓ CHECK "Add Python to PATH" during installation
+5. Click "Install Now"
+
+Mac:
+1. Go to python.org/downloads
+2. Download Python 3.11 or newer
+3. Run the installer
+4. Follow the prompts
+
+To verify Python is installed:
+- Open Terminal (Mac) or Command Prompt (Windows)
+- Type: python --version
+- You should see something like "Python 3.11.x"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📥 STEP 2: DOWNLOAD AND EXTRACT THE DASHBOARD
+
+1. Download the Charlotte-Dashboard.zip file
+2. Right-click and select "Extract All..." (Windows) or double-click (Mac)
+3. Extract to a location you'll remember (like Documents or Desktop)
+4. You should see a folder with these files:
+   ✓ app.py
+   ✓ requirements.txt
+   ✓ charlotte_regional_survey_simulated_n5000.csv
+   ✓ README.md
+   ✓ QUICK_START.txt (this file)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 STEP 3: INSTALL REQUIRED SOFTWARE
+
+Windows:
+1. Press Windows Key + R
+2. Type: cmd
+3. Press Enter
+4. Type: cd Documents\Charlotte-Dashboard (adjust path if needed)
+5. Press Enter
+6. Type: pip install -r requirements.txt
+7. Press Enter and wait (this takes 1-2 minutes)
+
+Mac:
+1. Press Command + Space
+2. Type: terminal
+3. Press Enter
+4. Type: cd ~/Documents/Charlotte-Dashboard (adjust path if needed)
+5. Press Enter
+6. Type: pip install -r requirements.txt
+7. Press Enter and wait (this takes 1-2 minutes)
+
+✓ You should see "Successfully installed..." messages
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 STEP 4: RUN THE DASHBOARD
+
+In the same terminal/command prompt window:
+
+Type: streamlit run app.py
+Press Enter
+
+You should see:
+  You can now view your Streamlit app in your browser.
+  Local URL: http://localhost:8501
+
+Your web browser should automatically open the dashboard!
+
+If it doesn't open automatically:
+- Open any web browser (Chrome, Firefox, Safari, Edge)
+- Type in the address bar: localhost:8501
+- Press Enter
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎮 HOW TO USE THE DASHBOARD
+
+NAVIGATION (Left Sidebar):
+├─ 📊 Overview → High-level summary and key metrics
+├─ 🏘️ Geographic Analysis → County and zip code insights
+├─ 👥 Demographics Deep Dive → Analysis by age, race, income
+├─ 😊 Well-Being Explorer → Quality of life indicators
+├─ 🏠 Regional Issues → Priorities and concerns
+└─ 📈 Correlations & Insights → Statistical relationships
+
+FILTERS (Left Sidebar):
+• County: Select a specific county or "All"
+• Age Group: Filter by age range or "All"
+• Race/Ethnicity: Filter by demographic group or "All"
+
+The dashboard automatically updates all charts based on your filters!
+
+INTERACTIVE FEATURES:
+• Hover over any chart for detailed information
+• Click and drag to zoom in on charts
+• Double-click to reset zoom
+• All charts are interactive - explore them!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎨 UNDERSTANDING THE COLORS
+
+Green tones → Positive/Good (high satisfaction, strong belonging)
+Red tones → Negative/Concerning (low satisfaction, high concern)
+Blue tones → Neutral (general data, no value judgment)
+Orange/Yellow → Warning or middle values
+
+Darker/brighter colors = Stronger values
+Lighter/paler colors = Weaker values
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 KEY METRICS EXPLAINED
+
+Life Satisfaction (0-10)
+→ How satisfied people are with their lives overall
+→ Higher = Better
+
+Trust (0-10)
+→ How much people trust others in their community
+→ Higher = Better
+
+Social Support (0-10)
+→ Whether people have friends/family to count on
+→ Higher = Better
+
+Housing Concern (0-10)
+→ How serious people think the housing situation is
+→ Lower = Better (less concerning)
+
+Belonging (1-5)
+→ Sense of connection to local community
+→ 1 = Very Weak, 5 = Very Strong (exclude "No Opinion")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🛑 STOPPING THE DASHBOARD
+
+When you're done:
+1. Go back to the terminal/command prompt window
+2. Press Ctrl + C (Windows/Mac)
+3. Type: y (if asked to confirm)
+4. Press Enter
+
+The dashboard will stop running. You can close the terminal window.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔄 RUNNING IT AGAIN LATER
+
+Next time you want to use the dashboard:
+1. Open Terminal/Command Prompt
+2. Navigate to the folder: cd path/to/Charlotte-Dashboard
+3. Run: streamlit run app.py
+4. Your browser will open the dashboard
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ TROUBLESHOOTING
+
+Problem: "Python is not recognized"
+Solution: Python not installed or not in PATH. Reinstall Python and 
+          check "Add to PATH" option.
+
+Problem: "No module named 'streamlit'"
+Solution: Run: pip install -r requirements.txt
+
+Problem: Dashboard won't open in browser
+Solution: Manually type localhost:8501 in your browser address bar
+
+Problem: Charts are blank or not loading
+Solution: Clear browser cache or try a different browser (Chrome works best)
+
+Problem: Dashboard is very slow
+Solution: Try filtering to specific counties instead of "All"
+
+Problem: Port 8501 already in use
+Solution: Run: streamlit run app.py --server.port 8502
+          Then go to: localhost:8502
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 TIPS FOR BEST EXPERIENCE
+
+✓ Use Chrome, Firefox, or Safari for best compatibility
+✓ Maximize your browser window for better chart viewing
+✓ Start with the Overview page to get oriented
+✓ Use filters to focus on specific populations
+✓ Hover over charts for detailed information
+✓ Try different combinations of filters to explore patterns
+✓ Check the Correlations page for statistical insights
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📧 NEED MORE HELP?
+
+1. Check README.md for detailed documentation
+2. Visit docs.streamlit.io for Streamlit help
+3. Google "streamlit [your question]" for community solutions
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  IMPORTANT REMINDER
+
+This dashboard shows SIMULATED DATA created for demonstration and 
+teaching purposes. It is NOT real survey data from actual Charlotte 
+residents. Do not use for policy decisions or academic publication.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Enjoy exploring the Charlotte Regional Well-Being data! 🎉
+
+Version 1.0 | February 2026

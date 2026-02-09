@@ -1,0 +1,302 @@
+CHARLOTTE REGIONAL WELL-BEING SURVEY
+SIMULATED DATASET DOCUMENTATION
+================================================================================
+
+OVERVIEW
+--------
+This simulated dataset contains 5,000 survey responses representing adult 
+residents across the 14-county Charlotte metropolitan region. The data was 
+generated to provide realistic distributions and relationships for well-being 
+research and analysis.
+
+GEOGRAPHIC COVERAGE
+-------------------
+14 Counties:
+North Carolina: Anson, Cabarrus, Catawba, Cleveland, Gaston, Iredell, Lincoln,
+                Mecklenburg, Rowan, Stanly, Union
+South Carolina: Chester, Lancaster, York
+
+SAMPLING STRATEGY
+-----------------
+The dataset employs stratified sampling with oversampling for smaller counties:
+
+1. Minimum Sample: 200 responses per county (ensures county-level analysis)
+2. Proportional Allocation: Remaining responses allocated by population
+3. Final Distribution:
+   - Mecklenburg (largest): 1,026 responses (20.5%)
+   - Anson (smallest): 216 responses (4.3%)
+   - All counties have sufficient N for statistical analysis
+
+County Sample Sizes:
+   Mecklenburg: 1,026 (20.5%) - Population: 1,115,482
+   York, SC:      407 (8.1%)  - Population: 282,090
+   Union:         381 (7.6%)  - Population: 247,262
+   Gaston:        367 (7.3%)  - Population: 227,499
+   Cabarrus:      366 (7.3%)  - Population: 225,804
+   Iredell:       337 (6.7%)  - Population: 186,693
+   Catawba:       318 (6.4%)  - Population: 160,610
+   Rowan:         307 (6.1%)  - Population: 146,875
+   Cleveland:     273 (5.5%)  - Population: 99,519
+   Lancaster, SC: 270 (5.4%)  - Population: 96,016
+   Lincoln:       264 (5.3%)  - Population: 87,256
+   Stanly:        245 (4.9%)  - Population: 62,504
+   Chester, SC:   223 (4.5%)  - Population: 32,294
+   Anson:         216 (4.3%)  - Population: 22,194
+
+DATA GENERATION METHODOLOGY
+---------------------------
+
+1. DEMOGRAPHIC CHARACTERISTICS
+
+Age Distribution:
+- Based on Charlotte metro census data with slight aging adjustment for survey 
+  respondent bias
+- Distribution: 18-24 (12%), 25-39 (28%), 40-54 (28%), 55-65 (18%), 65+ (14%)
+
+Race/Ethnicity:
+- Varies by county reflecting actual demographic patterns
+- Mecklenburg (most diverse): 50% White, 30% Black, 14% Hispanic, 5% Asian
+- Suburban counties (Union, Cabarrus): ~75% White, 12% Black, 10% Hispanic
+- Rural counties with historical Black populations (Anson, Chester): ~50/45 White/Black
+- Generated using county-specific probability distributions
+
+Income:
+- Correlated with:
+  * County (urban/suburban counties higher)
+  * Age (U-shaped: lowest for young adults, peaks mid-career, declines in retirement)
+  * Race/ethnicity (reflects documented income inequality)
+  * Employment status
+- Distribution mirrors regional patterns with ~8% refusing/don't know
+
+Employment:
+- Age-dependent probabilities
+- Young adults: higher part-time, some unemployment
+- Middle-aged: predominantly full-time
+- 55-65: mixture with increasing retirement
+- 65+: predominantly retired
+
+2. WELL-BEING MEASURES
+
+Life Satisfaction (LIFESAS, 0-10 scale):
+- Mean: ~6.8, SD: ~1.9
+- Based on research showing average life satisfaction around 7 in developed nations
+- Influenced by:
+  * Income (higher income → higher satisfaction)
+  * Employment (unemployment → -1.5 points)
+  * Age (U-shaped: lower for middle-aged, higher for retirees)
+- Range: 0-10
+
+Worthwhileness (LIFEWW):
+- Highly correlated with life satisfaction (r≈0.85)
+- Slightly higher mean than life satisfaction
+- Generated as life satisfaction ± random adjustment
+
+Social Support (BELONGNEED, 0-10 scale):
+- Moderate correlation with life satisfaction (r≈0.45)
+- Mean: ~7.2, reflects generally strong family/friend networks
+- Generated as correlated with life satisfaction with added noise
+
+Trust (TRUST, 0-10 scale):
+- Moderate correlation with life satisfaction (r≈0.40)
+- Mean: ~6.0, reflects moderate trust levels
+- Generated as weighted function of life satisfaction
+
+Sense of Belonging:
+- Ordinal scale (Very Weak to Very Strong)
+- Varies by county type:
+  * Urban (Mecklenburg): More "weak" responses
+  * Rural/small town: Stronger community belonging
+  * Suburban: Middle ground
+
+3. REGIONAL PRIORITIES AND OUTLOOK
+
+Top Problems (up to 3 selections):
+- Weighted probabilities based on regional concerns:
+  * Housing affordability: 30% mention rate
+  * Crime/safety: 28%
+  * Economic opportunity: 20%
+  * Public education: 22%
+  * Transportation: 20%
+- Independent selection per respondent
+
+Regional Outlook (3-4 years):
+- Slightly pessimistic distribution:
+  * Better: 25%
+  * Worse: 35%
+  * Same: 30%
+  * Don't know: 10%
+
+4. FINANCIAL WELL-BEING
+
+Change vs. Year Ago:
+- Correlated with employment status and income
+- Unemployed: 60% worse off
+- High income: 35% better off
+- Middle: balanced distribution
+
+Emergency Expense Confidence:
+- Strong correlation with income
+- Low income (<$35k): 65% not/slightly confident
+- High income ($100k+): 78% very/completely confident
+
+5. SOCIAL CONNECTION
+
+Meals (Q56, Q57):
+- Days per week eating each meal (0-7)
+- Breakfast mean: 4.5 days/week
+- Lunch mean: 6.0 days/week
+- Dinner mean: 6.5 days/week
+- Meals with others: ~40% of total meal occasions
+- Binomial distribution based on meal frequency
+
+6. NEIGHBORHOOD QUALITY
+
+Environmental Problems:
+- Urban counties report more issues
+- Mecklenburg, Gaston, Cabarrus: Higher problem rates
+- Rural counties: Lower problem rates
+
+Safety:
+- Day vs. night difference
+- Urban areas: Lower safety perceptions, especially at night
+- Mecklenburg: More variation, 8% feel unsafe at night
+- Rural/suburban: Generally higher safety perceptions
+
+7. HOUSING
+
+Housing Situation Severity (0-10):
+- Urban counties: Mean ~7.5 (serious problem)
+- Rural counties: Mean ~4.5 (moderate problem)
+- Correlated with income (lower income sees it as more severe)
+
+Housing Affordability Reasons:
+- Multiple selections allowed
+- Top reasons (by selection rate):
+  * Not enough housing built: 28%
+  * Corporations buying properties: 25%
+  * Out-of-state migration: 24%
+  * Landlords raising rents: 22%
+  * Opposition to affordable housing: 20%
+
+KEY CORRELATIONS IN DATASET
+----------------------------
+
+Strong correlations (r > 0.5):
+- Life satisfaction ↔ Worthwhileness: r = 0.85
+- Income ↔ Emergency expense confidence: r = 0.70
+
+Moderate correlations (r = 0.3-0.5):
+- Life satisfaction ↔ Social support: r = 0.45
+- Life satisfaction ↔ Trust: r = 0.40
+- Life satisfaction ↔ Income: r = 0.35
+- Life satisfaction ↔ Emergency confidence: r = 0.42
+- Income ↔ Age: r = 0.25 (inverted U-shape)
+
+Urban-rural differences:
+- Housing concern severity: Urban > Rural (d ≈ 1.5 SD)
+- Environmental problems: Urban > Rural
+- Safety perceptions: Rural > Urban (especially night)
+- Belonging: Rural > Urban
+
+RESEARCH LITERATURE BASIS
+--------------------------
+
+Well-being measures based on:
+- ONS4 well-being questions (UK Office for National Statistics)
+- World Values Survey trust measures
+- Happiness research showing life satisfaction mean ~7, SD ~2
+- Income-happiness correlation research (Kahneman & Deaton, 2010)
+- Age-happiness U-curve literature (Blanchflower & Oswald, 2008)
+
+Demographic patterns based on:
+- U.S. Census Bureau ACS 2019-2023 estimates
+- Charlotte Regional Indicators Project data
+- North Carolina and South Carolina state demographics
+
+Regional context based on:
+- Charlotte area housing affordability crisis (2020-2024)
+- Regional crime statistics and perceptions
+- Transportation challenges in growing metro areas
+- Educational quality variations across counties
+
+LIMITATIONS AND CAVEATS
+-----------------------
+
+1. Simulated Data: This is NOT real survey data. All responses are generated 
+   algorithmically based on research literature and demographic patterns.
+
+2. Simplified Relationships: Real human behavior is more complex than the 
+   correlations programmed into this dataset.
+
+3. Missing Nuance: County-level variations are approximated based on broad 
+   demographic categories rather than detailed local knowledge.
+
+4. Temporal Validity: Patterns reflect 2024-2025 conditions and may not apply 
+   to other time periods.
+
+5. Cultural Factors: The model doesn't capture all cultural, historical, and 
+   social factors that influence well-being and attitudes.
+
+6. Survey Mode Effects: Real surveys have mode effects, non-response bias, and 
+   measurement error not fully reflected here.
+
+RECOMMENDED USES
+----------------
+
+✓ Teaching survey analysis and statistical methods
+✓ Testing data analysis workflows and visualization techniques
+✓ Practicing multilevel modeling with county-level predictors
+✓ Developing well-being indicators and composite measures
+✓ Prototyping dashboards and reporting tools
+✓ Understanding relationships between well-being domains
+
+✗ Making actual policy recommendations
+✗ Publishing as real survey findings
+✗ Inferring causation (correlations are built-in, not discovered)
+✗ Generalizing to actual Charlotte residents' views
+
+DATASET FILES
+-------------
+
+1. charlotte_regional_survey_simulated_n5000.csv
+   - Main dataset with all 5,000 responses
+   - 36 columns including demographics, well-being, and regional measures
+   - CSV format for easy import into R, Python, SPSS, Stata, etc.
+
+2. charlotte_survey_codebook.txt
+   - Variable definitions and response codes
+   - Question wording reference
+   - Data generation notes
+
+3. charlotte_survey_summary.txt
+   - Descriptive statistics
+   - Distribution summaries
+   - Key correlations
+
+4. charlotte_survey_documentation.txt (this file)
+   - Comprehensive methodology
+   - Sampling strategy
+   - Research basis
+   - Limitations and recommended uses
+
+CITATION
+--------
+
+If using this simulated dataset for teaching or demonstration purposes, 
+please cite as:
+
+"Simulated Charlotte Regional Well-Being Survey Dataset (N=5,000). 
+Generated February 2026 based on census demographics and well-being research 
+literature. For instructional use only."
+
+CONTACT
+-------
+
+Questions about the data generation methodology or variable construction can 
+be directed to the dataset creator.
+
+Version: 1.0
+Generated: February 4, 2026
+Seed: 42 (for reproducibility)
+
+================================================================================

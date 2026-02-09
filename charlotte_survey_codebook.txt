@@ -1,0 +1,200 @@
+
+CHARLOTTE REGIONAL WELL-BEING SURVEY - SIMULATED DATA CODEBOOK
+N = 5,000 respondents across 14-county region
+Generated: February 2026
+
+=== IDENTIFIERS ===
+respondent_id: Unique identifier (1-5000)
+COUNTY: County of residence
+  1 = Cabarrus
+  2 = Union  
+  3 = Gaston
+  4 = Mecklenburg
+  5 = Chester, SC
+  6 = Anson
+  7 = Rowan
+  8 = York, SC
+  9 = Iredell
+  10 = Lancaster, SC
+  11 = Lincoln
+  [Also includes: Catawba, Cleveland, Stanly by name]
+
+CITY: Live in Charlotte city limits (Mecklenburg only)
+  1 = Yes
+  2 = No
+  3 = Don't know
+
+D1: Zip code (text)
+
+=== DEMOGRAPHICS ===
+
+D3: Age range
+  1 = 18-24
+  2 = 25-39
+  3 = 40-54
+  4 = 55-65
+  5 = Over 65
+
+D4: Race/ethnicity (primary selection)
+  1 = White
+  2 = Hispanic/Latino
+  3 = Black/African American
+  4 = Asian
+  5 = Other/Multiple/MENA/Native American/Pacific Islander
+
+D2: Household annual income
+  1 = Less than $15,000
+  2 = $15,000-$24,999
+  3 = $25,000-$34,999
+  4 = $35,000-$49,999
+  5 = $50,000-$74,999
+  6 = $75,000-$99,999
+  7 = $100,000-$149,999
+  8 = $150,000 or more
+  -99 = Prefer not to answer
+  -98 = Don't know
+
+Q65: Employment status
+  1 = Working full time
+  2 = Working part time
+  3 = Unemployed & looking
+  4 = Retired
+
+=== INFORMATION SOURCES ===
+
+NEWS: Prefer to get local news from
+  1 = Television
+  2 = Newspapers
+  3 = Radio/podcasts
+  6 = Social media
+  7 = Not interested in local issues
+  5 = Other
+
+SOCIAL: Primary social media platform (if NEWS=6)
+  1 = Reddit
+  2 = Facebook
+  3 = Instagram
+  4 = TikTok
+  5 = YouTube
+  6 = X (Twitter)
+  7 = Other
+
+=== REGIONAL PRIORITIES ===
+
+REGION_1, REGION_2, REGION_3: Top 3 problems facing Charlotte region
+  1 = Housing affordability
+  2 = Crime/safety
+  3 = Economic opportunity
+  4 = Public education
+  5 = Transportation
+  6 = Racial equity
+  7 = Public health
+  8 = Climate/environment
+  9 = Taxes
+  10 = Other
+
+ReOUTLOOK: Living conditions in 3-4 years
+  1 = Better
+  2 = Worse
+  3 = About the same
+  4 = Don't know
+
+=== WELL-BEING ===
+
+LIFESAS: Life satisfaction nowadays (0-10 scale)
+  0 = Not at all satisfied
+  10 = Completely satisfied
+
+LIFEWW: Things you do feel worthwhile (0-10 scale)
+  0 = Not at all worthwhile
+  10 = Completely worthwhile
+
+BELONGCOM: Sense of belonging to local community
+  1 = Very weak
+  2 = Somewhat weak
+  3 = Somewhat strong
+  4 = Very strong
+  5 = No opinion
+
+BELONGNEED: Have friends/relatives to count on (0-10 scale)
+  0 = Completely disagree
+  10 = Completely agree
+
+TRUST: Most people can be trusted (0-10 scale)
+  0 = Need to be very careful
+  10 = Most people can be trusted
+
+=== FINANCIAL WELL-BEING ===
+
+Q7: Financial situation compared to year ago
+  1 = Better off now
+  2 = Worse off now
+  3 = About the same
+  4 = Don't know
+
+Q8: Confidence handling unexpected expense
+  1 = Not at all confident
+  2 = Slightly confident
+  3 = Moderately confident
+  4 = Very confident
+  5 = Completely confident
+
+=== MEALS & SOCIAL CONNECTION ===
+
+Q56_breakfast, Q56_lunch, Q56_dinner: Days ate meal in past 7 days (0-7)
+
+Q57_breakfast, Q57_lunch, Q57_dinner: Days ate meal with others in past 7 days (0-7)
+
+=== NEIGHBORHOOD QUALITY ===
+
+Q10: Environmental problems (air pollution, noise, lack of green space)
+  1 = None at all
+  2 = A little
+  3 = A moderate amount
+  4 = A lot
+  5 = A great deal
+
+Q11_day: Safety walking alone during day
+Q11_night: Safety walking alone at night
+  1 = Very unsafe
+  2 = Unsafe
+  3 = Neutral
+  4 = Somewhat safe
+  5 = Very safe
+
+=== HOUSING ===
+
+HOUSING1: How serious is housing situation (0-10 scale)
+  0 = Not serious at all
+  10 = Extremely serious
+
+HOUSING2_1 through HOUSING2_4: Main reasons for housing affordability challenges
+  1 = Corporations buying properties for rentals
+  2 = Landlords can raise rent freely
+  3 = Opposition to affordable housing
+  4 = People moving from out of state
+  5 = Only expensive single-family homes built
+  6 = Individuals buying properties for rentals
+  7 = Local government not doing enough
+  8 = Affordable housing laws not enforced
+  9 = Not enough housing built
+  10 = Don't know
+
+=== DATA GENERATION NOTES ===
+
+- County samples range from 200 (minimum) to 1,182 (Mecklenburg)
+- Distributions based on:
+  * Census demographic data for Charlotte metro
+  * Well-being research (life satisfaction ~6.8 mean, SD ~2)
+  * Income inequality by race/ethnicity
+  * Urban-rural differences in safety perception, belonging, housing concerns
+  * Age-related employment and income patterns
+  * Correlations between well-being, income, employment, social support
+
+- Key correlations embedded:
+  * Life satisfaction ↔ income (r≈0.35)
+  * Life satisfaction ↔ employment status (unemployed lower)
+  * Trust ↔ life satisfaction (r≈0.40)
+  * Social support ↔ life satisfaction (r≈0.45)
+  * Housing concern ↔ county (urban higher)
+  * Belonging ↔ county type (rural/small town stronger)

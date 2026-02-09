@@ -1,0 +1,726 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    CHARLOTTE REGIONAL WELL-BEING DASHBOARD
+                              COMPREHENSIVE USER GUIDE
+═══════════════════════════════════════════════════════════════════════════════
+
+TABLE OF CONTENTS
+═════════════════
+1. Dashboard Overview
+2. Navigation Guide
+3. Page-by-Page Walkthrough
+4. Filter Guide
+5. Visualization Types Explained
+6. Interpretation Guidelines
+7. Best Practices
+8. Advanced Features
+
+═══════════════════════════════════════════════════════════════════════════════
+
+1. DASHBOARD OVERVIEW
+═════════════════════
+
+Purpose
+-------
+This interactive dashboard helps you explore and understand well-being patterns 
+across the 14-county Charlotte metropolitan region. You can:
+
+• View overall trends and patterns
+• Compare different geographic areas
+• Analyze demographic differences
+• Identify correlations between variables
+• Test statistical significance of differences
+
+Key Features
+------------
+✓ Six main analytical pages
+✓ Real-time filtering by county, age, and race/ethnicity
+✓ Interactive charts with hover details
+✓ Statistical testing (ANOVA)
+✓ Export-ready visualizations
+✓ Responsive design (works on tablets and desktops)
+
+Technical Details
+-----------------
+• Built with Streamlit framework
+• Powered by Plotly for interactive visualizations
+• Uses pandas for data processing
+• Statistical tests via scipy
+• Sample size: 5,000 simulated responses
+• Coverage: 14 counties across NC and SC
+
+═══════════════════════════════════════════════════════════════════════════════
+
+2. NAVIGATION GUIDE
+═══════════════════
+
+Sidebar (Left Panel)
+--------------------
+The sidebar contains:
+
+[NAVIGATION MENU]
+Choose from 6 main pages by clicking on the radio buttons:
+• 📊 Overview
+• 🏘️ Geographic Analysis
+• 👥 Demographics Deep Dive
+• 😊 Well-Being Explorer
+• 🏠 Regional Issues
+• 📈 Correlations & Insights
+
+[FILTERS SECTION]
+Three dropdown menus allow you to filter the data:
+• County: Select specific county or "All"
+• Age Group: Filter by age range or "All"
+• Race/Ethnicity: Filter by demographic group or "All"
+
+[SAMPLE SIZE INDICATOR]
+Shows current filtered sample size, e.g.:
+"Showing 1,234 of 5,000 responses"
+
+Main Content Area (Right Panel)
+--------------------------------
+• Title and description at the top
+• Key metrics in colored boxes
+• Interactive visualizations
+• Statistical summaries and insights
+
+═══════════════════════════════════════════════════════════════════════════════
+
+3. PAGE-BY-PAGE WALKTHROUGH
+═══════════════════════════
+
+📊 OVERVIEW PAGE
+----------------
+
+What You'll See:
+• 5 key metric cards at the top showing averages
+• Life satisfaction distribution histogram
+• County sample size bar chart
+• Well-being quadrant scatter plot (Life Sat. vs. Social Support)
+• Demographic pie charts (age, race, employment)
+
+How to Use:
+1. Start here to get a sense of the overall data
+2. Note the average life satisfaction (typically 5-7 out of 10)
+3. Check the well-being quadrant to see distribution patterns:
+   - Top right (Thriving): High satisfaction + high support
+   - Top left (Satisfied but Isolated): High satisfaction + low support
+   - Bottom right (Connected but Struggling): Low satisfaction + high support
+   - Bottom left (Vulnerable): Low satisfaction + low support
+4. Review demographic composition in pie charts
+
+Key Insights to Look For:
+• Is life satisfaction normally distributed or skewed?
+• Which counties have larger/smaller samples?
+• Where do most respondents fall in the well-being quadrant?
+• What's the demographic composition of your sample?
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🏘️ GEOGRAPHIC ANALYSIS PAGE
+----------------------------
+
+What You'll See:
+• Metric selector dropdown (choose what to analyze)
+• County ranking bar chart with confidence intervals
+• Rankings table with color-coded values
+• Multi-metric heatmap showing all counties
+• Zip code analysis (top 20 by life satisfaction)
+
+How to Use:
+1. Select a metric from the dropdown (e.g., "Life Satisfaction")
+2. Review county rankings - darker green = better, darker red = worse
+3. Look at error bars for confidence intervals (wider = less certain)
+4. Check the heatmap to compare counties across multiple metrics
+5. Scroll to zip code section for more granular geographic patterns
+
+Key Insights to Look For:
+• Which counties rank highest/lowest?
+• Are urban or rural counties doing better?
+• How wide are the confidence intervals? (more data = narrower)
+• Do certain metrics cluster together geographically?
+
+Interpretation Tips:
+• Counties with <300 responses have wider confidence intervals
+• Urban counties (Mecklenburg) often differ from rural areas
+• Look for consistency across multiple metrics
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👥 DEMOGRAPHICS DEEP DIVE PAGE
+------------------------------
+
+What You'll See:
+• Demographic dimension selector
+• Grouped bar chart comparing well-being metrics
+• Violin plots showing distribution shapes
+• Statistics table with means and standard deviations
+• Key insights box
+• Cross-demographic heatmap (if applicable)
+
+How to Use:
+1. Select a demographic dimension (Age, Race, Income, Employment)
+2. Compare well-being scores across groups in the bar chart
+3. Examine violin plots to see if distributions differ
+4. Review statistics table for exact numbers
+5. Check the heatmap for interaction effects (e.g., Age × Income)
+
+Key Insights to Look For:
+• Which groups have highest/lowest well-being?
+• How large are the gaps between groups?
+• Are distributions similar in shape or very different?
+• Do certain combinations show especially high/low scores?
+
+Interpretation Tips:
+• Wider violin plots = more variability within that group
+• Look for both mean differences AND distribution overlap
+• Small sample sizes may lead to unreliable estimates
+• Consider confidence intervals when comparing groups
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+😊 WELL-BEING EXPLORER PAGE
+----------------------------
+
+What You'll See:
+• 4 metric cards (Life Satisfaction, Worthwhileness, Trust, Support)
+• 2x2 grid of distribution histograms
+• Community belonging bar chart
+• Belonging by area type (urban vs. rural)
+• Factor comparison scatter plot with trendline
+
+How to Use:
+1. Review the 4 key well-being metric cards at top
+2. Compare distributions - are they normal, skewed, bimodal?
+3. Examine belonging levels - what % feel strong connection?
+4. Compare urban vs. rural belonging patterns
+5. Select a factor to see correlation with life satisfaction
+6. Note the correlation coefficient (r value) in the title
+
+Key Insights to Look For:
+• Are well-being scores normally distributed around the mean?
+• Do people feel connected to their communities?
+• How do urban and rural areas differ in belonging?
+• Which factors most strongly correlate with life satisfaction?
+
+Interpretation Tips:
+• r > 0.5 = strong correlation
+• r = 0.3-0.5 = moderate correlation
+• r < 0.3 = weak correlation
+• Trendlines help identify relationships but don't prove causation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🏠 REGIONAL ISSUES PAGE
+-----------------------
+
+What You'll See:
+• Top regional priorities bar chart (% mentioning)
+• Priorities by demographics comparison
+• Housing severity by county
+• Top housing affordability reasons
+• Regional outlook pie chart
+• Current life satisfaction by outlook
+• Financial change distribution
+• Emergency expense confidence levels
+
+How to Use:
+1. Identify top concerns (housing, crime, economy, etc.)
+2. Compare priorities across demographic groups
+3. Review housing severity by county
+4. Understand perceived causes of housing challenges
+5. Check regional outlook - optimistic or pessimistic?
+6. Examine financial well-being indicators
+
+Key Insights to Look For:
+• What are people's top concerns?
+• Do priorities differ by age, income, or location?
+• Which counties see housing as most severe?
+• What do people think is causing housing issues?
+• Are people optimistic or pessimistic about the future?
+• How confident are people in handling emergencies?
+
+Interpretation Tips:
+• Top 3 priorities system means percentages may exceed 100%
+• Housing severity scale: 0-3 = minor, 4-6 = moderate, 7-10 = severe
+• Outlook relates to current satisfaction levels
+• Financial confidence correlates strongly with income
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📈 CORRELATIONS & INSIGHTS PAGE
+--------------------------------
+
+What You'll See:
+• Full correlation matrix heatmap
+• Top positive correlations with life satisfaction
+• Top negative correlations with life satisfaction
+• Income gradient line chart (well-being by income level)
+• Employment status comparison (3 metrics)
+• ANOVA statistical test results
+
+How to Use:
+1. Review correlation matrix - red = negative, blue = positive
+2. Identify strongest correlates of life satisfaction
+3. Examine income gradient - does well-being increase with income?
+4. Compare employment statuses across metrics
+5. Select a variable for ANOVA test
+6. Interpret p-value for statistical significance
+
+Key Insights to Look For:
+• What factors correlate most with life satisfaction?
+• Are there unexpected negative correlations?
+• How steep is the income gradient?
+• Do employed people differ from unemployed/retired?
+• Are group differences statistically significant?
+
+Interpretation Tips:
+• Correlation ≠ causation (relationships, not causes)
+• p < 0.05 = statistically significant difference
+• p < 0.01 = highly significant
+• p < 0.001 = very highly significant
+• Large sample sizes can make small differences significant
+
+═══════════════════════════════════════════════════════════════════════════════
+
+4. FILTER GUIDE
+═══════════════
+
+Understanding Filters
+---------------------
+Filters let you focus your analysis on specific subgroups. All visualizations 
+update in real-time when you change filters.
+
+County Filter
+-------------
+Options: All, Anson, Cabarrus, Catawba, Chester, Cleveland, Gaston, Iredell, 
+         Lancaster, Lincoln, Mecklenburg, Rowan, Stanly, Union, York
+
+Use When:
+• Comparing a specific county to regional average
+• Analyzing patterns within a county
+• Creating county-specific reports
+
+Example: Select "Mecklenburg" to see how Charlotte's urban core differs from 
+the regional average.
+
+Age Group Filter
+----------------
+Options: All, 18-24, 25-39, 40-54, 55-65, 65+
+
+Use When:
+• Understanding generational differences
+• Targeting age-specific programs
+• Analyzing life stage effects
+
+Example: Compare "18-24" to "65+" to see how well-being differs between young 
+adults and seniors.
+
+Race/Ethnicity Filter
+---------------------
+Options: All, Asian, Black/African American, Hispanic/Latino, Other, White
+
+Use When:
+• Examining equity and disparities
+• Understanding diverse community experiences
+• Targeting culturally-specific interventions
+
+Example: Select "Black/African American" to analyze well-being patterns in 
+this community.
+
+Combining Filters
+-----------------
+You can use multiple filters simultaneously for very specific analyses.
+
+Examples:
+• County: Mecklenburg + Age: 25-39 + Race: All
+  → Young professionals in Charlotte urban core
+
+• County: Anson + Age: 65+ + Race: All
+  → Seniors in a rural county
+
+• County: All + Age: All + Race: Hispanic/Latino
+  → Hispanic/Latino community across entire region
+
+Tips for Effective Filtering:
+• Start broad ("All") then narrow down
+• Watch the sample size indicator - need sufficient N for reliability
+• Compare filtered view to "All" to see differences
+• Try unexpected combinations to discover patterns
+
+Sample Size Guidelines:
+• N > 200: Reliable for most analyses
+• N = 100-200: Use with caution, wider confidence intervals
+• N = 50-100: Descriptive only, unreliable for inference
+• N < 50: Too small for meaningful analysis
+
+═══════════════════════════════════════════════════════════════════════════════
+
+5. VISUALIZATION TYPES EXPLAINED
+═════════════════════════════════
+
+The dashboard uses various chart types, each suited for different purposes.
+
+Bar Charts
+----------
+Purpose: Compare values across categories
+Best For: Rankings, group comparisons, frequencies
+How to Read:
+• Taller bars = higher values
+• Colors indicate magnitude (green=good, red=concerning)
+• Hover for exact values and sample sizes
+
+Example: County rankings for life satisfaction
+
+Histograms
+----------
+Purpose: Show distribution shape and frequency
+Best For: Understanding score distributions, identifying outliers
+How to Read:
+• X-axis: Score/value bins
+• Y-axis: Count of respondents
+• Dashed line: Mean value
+• Shape reveals normal, skewed, or bimodal distributions
+
+Example: Life satisfaction distribution (0-10 scale)
+
+Scatter Plots
+-------------
+Purpose: Show relationships between two continuous variables
+Best For: Correlation analysis, identifying patterns
+How to Read:
+• Each dot = one respondent
+• Trendline shows direction and strength of relationship
+• Correlation coefficient (r) in title indicates strength
+• Color/size can add additional dimensions
+
+Example: Life satisfaction vs. Social support
+
+Violin Plots
+------------
+Purpose: Compare distributions across groups
+Best For: Seeing both central tendency AND spread
+How to Read:
+• Width = frequency at that value (wider = more common)
+• White dot = median
+• Box = interquartile range (middle 50%)
+• Thinner ends = fewer observations
+
+Example: Life satisfaction distribution by age group
+
+Pie Charts
+----------
+Purpose: Show proportions of a whole
+Best For: Composition, demographic breakdowns
+How to Read:
+• Each slice = percentage of total
+• Labels show category and percentage
+• Larger slices = larger proportions
+
+Example: Employment status distribution
+
+Heatmaps
+--------
+Purpose: Show values across two dimensions
+Best For: Comparing many groups/variables simultaneously
+How to Read:
+• Each cell = a value (e.g., average score)
+• Color intensity = magnitude (darker = higher/lower depending on scale)
+• Red-Yellow-Green scale common (red=low, green=high)
+• Numbers in cells show exact values
+
+Example: Life satisfaction by Age × Income
+
+Line Charts
+-----------
+Purpose: Show trends across ordered categories
+Best For: Income gradients, age trends
+How to Read:
+• X-axis: Ordered categories (e.g., income levels)
+• Y-axis: Metric value
+• Line slope shows direction and rate of change
+• Multiple lines allow comparison across metrics
+
+Example: Well-being metrics across income levels
+
+Grouped Bar Charts
+------------------
+Purpose: Compare multiple metrics across groups simultaneously
+Best For: Multi-dimensional comparisons
+How to Read:
+• Groups of bars for each category
+• Different colors = different metrics
+• Height = value
+• Legend identifies which bar is which metric
+
+Example: Well-being scores (4 metrics) by demographic group
+
+═══════════════════════════════════════════════════════════════════════════════
+
+6. INTERPRETATION GUIDELINES
+═════════════════════════════
+
+Understanding Scales
+--------------------
+
+0-10 Scales (Life Satisfaction, Trust, etc.):
+• 0-3: Low (concerning)
+• 4-6: Moderate (average)
+• 7-10: High (positive)
+
+• Mean of 5.0 = neutral midpoint
+• Mean of 6.0-7.0 = typical for well-being research
+• Mean of 8.0+ = unusually high
+• Mean below 5.0 = concerning
+
+1-5 Ordinal Scales (Belonging, Confidence):
+• 1: Very weak/low
+• 2: Somewhat weak/low
+• 3: Moderate/neutral
+• 4: Somewhat strong/high
+• 5: Very strong/high
+
+Statistical Significance
+------------------------
+
+P-values (from ANOVA tests):
+• p < 0.05: Statistically significant (*) - 95% confident difference is real
+• p < 0.01: Highly significant (**) - 99% confident
+• p < 0.001: Very highly significant (***) - 99.9% confident
+• p ≥ 0.05: Not significant - could be due to chance
+
+Important: Statistical significance ≠ practical significance!
+A tiny difference can be statistically significant with large sample sizes.
+
+Correlation Coefficients (r):
+• r = 0.0-0.3: Weak correlation
+• r = 0.3-0.5: Moderate correlation
+• r = 0.5-0.7: Strong correlation
+• r = 0.7-1.0: Very strong correlation
+• Negative values indicate inverse relationships
+
+Effect Sizes
+------------
+
+When comparing groups:
+• Difference of 0.2 points on 0-10 scale: Very small
+• Difference of 0.5 points: Small but noticeable
+• Difference of 1.0 points: Moderate
+• Difference of 2.0+ points: Large and meaningful
+
+Confidence Intervals
+--------------------
+
+Error bars on charts show 95% confidence intervals:
+• Wider bars = less certainty (smaller sample or more variability)
+• Narrower bars = more certainty
+• Non-overlapping intervals suggest significant difference
+• Overlapping intervals suggest groups may not differ
+
+Common Pitfalls to Avoid
+------------------------
+
+1. Confusing Correlation with Causation
+   ✗ "High income causes happiness"
+   ✓ "High income is associated with higher life satisfaction"
+
+2. Ignoring Sample Size
+   ✗ Using results from N=20 as definitive
+   ✓ Noting that small samples have wider confidence intervals
+
+3. Cherry-Picking Results
+   ✗ Only reporting findings that match expectations
+   ✓ Presenting full picture, including unexpected results
+
+4. Over-Interpreting Small Differences
+   ✗ "6.2 vs 6.3 is a meaningful difference"
+   ✓ Considering both statistical AND practical significance
+
+5. Forgetting This is Simulated Data
+   ✗ Using for actual policy recommendations
+   ✓ Using for teaching, exploration, and methodology testing
+
+═══════════════════════════════════════════════════════════════════════════════
+
+7. BEST PRACTICES
+═════════════════
+
+For Analysis
+------------
+1. Start broad, then narrow
+   • Begin with "Overview" page and all filters at "All"
+   • Identify patterns of interest
+   • Use filters to drill down
+
+2. Compare systematically
+   • Select one variable to vary at a time
+   • Note sample sizes
+   • Look for consistent patterns across pages
+
+3. Triangulate findings
+   • Check if pattern appears in multiple visualizations
+   • Use different pages to confirm insights
+   • Compare filtered vs. unfiltered results
+
+4. Document your exploration
+   • Take screenshots of interesting findings
+   • Note filter settings used
+   • Record unexpected patterns for further investigation
+
+For Presentations
+-----------------
+1. Context first
+   • Always mention this is simulated data
+   • State sample sizes
+   • Define metrics and scales
+
+2. Choose appropriate visualizations
+   • Bar charts for comparisons
+   • Scatter plots for relationships
+   • Heatmaps for complex multi-group analyses
+
+3. Highlight key insights
+   • Use annotations (can't edit but note in presentation)
+   • Draw attention to important differences
+   • Explain what the audience should notice
+
+4. Provide interpretation
+   • Don't just show charts - explain what they mean
+   • Connect to larger context or research questions
+   • Acknowledge limitations
+
+For Teaching
+------------
+1. Demonstrate interactivity
+   • Show how filters work live
+   • Let students predict what will happen when you change filters
+   • Have students explore on their own
+
+2. Build statistical literacy
+   • Use ANOVA page to teach hypothesis testing
+   • Show correlation ≠ causation examples
+   • Discuss sample size and confidence intervals
+
+3. Encourage critical thinking
+   • Ask students to explain unexpected patterns
+   • Have them propose hypotheses for relationships
+   • Discuss limitations of the data
+
+4. Connect to real-world issues
+   • Use housing data to discuss affordability crisis
+   • Examine equity through demographic lens
+   • Explore well-being determinants
+
+═══════════════════════════════════════════════════════════════════════════════
+
+8. ADVANCED FEATURES
+════════════════════
+
+Exporting Visualizations
+------------------------
+To save a chart:
+1. Hover over the chart
+2. Click the camera icon in the top-right
+3. Choose "Download plot as PNG"
+4. Image saves to your Downloads folder
+
+You can then insert these into:
+• PowerPoint presentations
+• Word documents
+• Reports and publications
+• Social media
+
+Customizing the Experience
+---------------------------
+
+Change Port (if 8501 is busy):
+streamlit run app.py --server.port 8502
+
+Run on Network (access from other devices):
+streamlit run app.py --server.address 0.0.0.0
+
+Adjust Chart Sizes:
+• Maximize browser window for larger charts
+• Use browser zoom (Ctrl/Cmd + +/-) to resize interface
+• Charts are responsive and will adjust
+
+Understanding Data Filters
+---------------------------
+
+The dashboard applies filters in this order:
+1. County filter
+2. Age filter
+3. Race/ethnicity filter
+
+This means if you select:
+• County: Mecklenburg
+• Age: 25-39
+• Race: White
+
+You'll see only White respondents aged 25-39 in Mecklenburg County.
+
+The sample size indicator updates to show how many respondents match ALL 
+active filters.
+
+Performance Optimization
+------------------------
+
+If dashboard is slow:
+• Filter to specific counties (fewer data points)
+• Close other browser tabs
+• Restart the Streamlit server
+• Use a faster browser (Chrome recommended)
+
+Keyboard Shortcuts
+------------------
+• Ctrl/Cmd + R: Refresh the page
+• F11: Full screen mode
+• Ctrl/Cmd + F: Find text on page
+• Ctrl/Cmd + +/-: Zoom in/out
+
+Browser Compatibility
+---------------------
+Best: Chrome, Firefox
+Good: Safari, Edge
+Limited: Internet Explorer (not recommended)
+
+Mobile Use
+----------
+The dashboard works on tablets (iPad, Android tablets) but is optimized for 
+desktop/laptop screens. Some charts may be cramped on phone screens.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+FINAL NOTES
+═══════════
+
+Data Validity
+-------------
+Remember: This is SIMULATED data created for teaching and demonstration. 
+All patterns and correlations are built-in by design. Do not:
+• Make real policy recommendations based on this data
+• Publish as actual research findings
+• Claim these represent real Charlotte residents' views
+
+Appropriate Uses
+----------------
+✓ Teaching data analysis and visualization
+✓ Demonstrating dashboard capabilities
+✓ Practicing statistical methods
+✓ Prototyping analysis workflows
+✓ Learning Streamlit framework
+✓ Testing visualization approaches
+
+Support & Resources
+-------------------
+• README.md: Technical documentation
+• QUICK_START.txt: Installation guide
+• Codebook: Variable definitions
+• Streamlit docs: docs.streamlit.io
+• Plotly docs: plotly.com/python/
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Happy exploring! 📊🎉
+
+Version 1.0 | February 2026
+Charlotte Regional Well-Being Dashboard
