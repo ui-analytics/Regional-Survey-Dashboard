@@ -53,11 +53,11 @@ st.markdown("""
 
 # Color palettes based on best practices
 COLORS = {
-    'primary': '#1f77b4',
-    'secondary': '#ff7f0e',
-    'success': '#2ca02c',
-    'warning': '#d62728',
-    'info': '#9467bd',
+    'primary': '#1f77b4',      # Blue
+    'secondary': '#ff7f0e',    # Orange
+    'success': '#2ca02c',      # Green
+    'warning': '#d62728',      # Red
+    'info': '#9467bd',         # Purple
     'sequential': px.colors.sequential.Blues,
     'diverging': px.colors.diverging.RdYlGn,
     'categorical': px.colors.qualitative.Set2,
@@ -107,6 +107,81 @@ def load_data():
     df['income_numeric'] = df['D2'].apply(lambda x: x if x > 0 else np.nan)
     
     return df
+
+# Helper functions for visualizations
+def create_metric_card(label, value, delta=None, delta_color="normal"):
+    """Create a styled metric display"""
+    col = st.columns(1)[0]
+    col.metric(label=label, value=value, delta=delta, delta_color=delta_color)
+
+def create_distribution_plot(df, column, title, color_scale='Blues'):
+    """Create an interactive distribution plot"""
+    fig = px.histogram(
+        df, x=column, 
+        title=title,
+        color_discrete_sequence=[COLORS['primary']],
+        nbins=30
+    )
+    fig.update_layout(
+        showlegend=False,
+        xaxis_title=column.replace('_', ' ').title(),
+        yaxis_title='Count',
+        plot_bgcolor='white',
+        hovermode='x unified'
+    )
+    fig.update_traces(marker_line_color='white', marker_line_width=1)
+    return fig
+
+def create_grouped_bar(df, group_col, value_col, title):
+    """Create grouped bar chart"""
+    summary = df.groupby(group_col)[value_col].agg(['mean', 'count']).reset_index()
+    summary = summary.sort_values('mean', ascending=False)
+    
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=summary[group_col],
+        y=summary['mean'],
+        marker_color=COLORS['primary'],
+        text=summary['mean'].round(2),
+        textposition='outside',
+        hovertemplate='%{x}<br>Mean: %{y:.2f}<br>N: %{customdata}<extra></extra>',
+        customdata=summary['count']
+    ))
+    
+    fig.update_layout(
+        title=title,
+        xaxis_title=group_col.replace('_', ' ').title(),
+        yaxis_title=f'Mean {value_col}',
+        plot_bgcolor='white',
+        showlegend=False
+    )
+    return fig
+
+def create_heatmap(df, x_col, y_col, value_col, title):
+    """Create correlation heatmap"""
+    pivot = df.pivot_table(values=value_col, index=y_col, columns=x_col, aggfunc='mean')
+    
+    fig = px.imshow(
+        pivot,
+        title=title,
+        color_continuous_scale='RdYlGn',
+        aspect='auto',
+        labels=dict(color=value_col)
+    )
+    fig.update_layout(
+        xaxis_title=x_col.replace('_', ' ').title(),
+        yaxis_title=y_col.replace('_', ' ').title()
+    )
+    return fig
+
+def create_county_map_data(df, metric):
+    """Prepare county-level data for visualization"""
+    county_stats = df.groupby('COUNTY').agg({
+        metric: 'mean',
+        'respondent_id': 'count'
+    }).reset_index()
+    county_stats.columns = ['County', 'Mean Value', 'Sample Size']
+    return county_stats
 
 # Main dashboard
 def main():
@@ -165,7 +240,7 @@ def main():
 def show_overview(filtered_df, full_df):
     """Overview page with key metrics and summary visualizations"""
     st.title("📊 Charlotte Regional Well-Being Dashboard")
-    st.markdown("### Survey Overview: 5,000 Residents Across 14 Counties (Read the State of the Region Report)")
+    st.markdown("### Survey Overview: 5,000 Residents Across 14 Counties")
     
     # Key metrics row
     col1, col2, col3, col4, col5 = st.columns(5)
@@ -214,9 +289,8 @@ def show_overview(filtered_df, full_df):
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### Life Satisfaction Distribution", 
-                   help="This histogram shows how life satisfaction scores (0-10 scale) are distributed across respondents. The red dashed line indicates the average score. Higher bars on the right indicate more people with higher satisfaction. A score of 0 means 'not at all satisfied' while 10 means 'completely satisfied'.")
-        
+        # Well-being distribution
+        st.subheader("Life Satisfaction Distribution")
         fig = go.Figure()
         fig.add_trace(go.Histogram(
             x=filtered_df['LIFESAS'],
@@ -243,9 +317,8 @@ def show_overview(filtered_df, full_df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
-        st.markdown("#### Sample Distribution by County",
-                   help="This horizontal bar chart shows the number of survey respondents from each county. Darker blue indicates more respondents. The numbers at the end of each bar show the exact count. Counties are sorted from most to least respondents.")
-        
+        # County distribution
+        st.subheader("Sample Distribution by County")
         county_counts = filtered_df['COUNTY'].value_counts().reset_index()
         county_counts.columns = ['County', 'Count']
         
@@ -270,8 +343,7 @@ def show_overview(filtered_df, full_df):
     
     # Well-being quadrant
     st.markdown("---")
-    st.markdown("#### Well-Being Dimensions: Life Satisfaction vs. Social Support",
-               help="This scatter plot shows the relationship between life satisfaction (vertical axis) and social support (horizontal axis). Each dot represents a respondent. The color indicates trust level (darker = higher trust). Dot size represents worthwhileness. The dotted lines divide the chart into four quadrants: Thriving (high on both), Satisfied but Isolated (high satisfaction, low support), Connected but Struggling (low satisfaction, high support), and Vulnerable (low on both).")
+    st.subheader("Well-Being Dimensions: Life Satisfaction vs. Social Support")
     
     fig = px.scatter(
         filtered_df,
@@ -311,12 +383,12 @@ def show_overview(filtered_df, full_df):
     
     # Demographics summary
     st.markdown("---")
-    st.markdown("#### Sample Demographics",
-               help="These pie charts show the demographic composition of survey respondents. Each slice represents a different group, with percentages showing the proportion of the total sample. Hover over slices to see exact counts and percentages.")
+    st.subheader("Sample Demographics")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
+        # Age distribution pie
         age_dist = filtered_df['age_group'].value_counts()
         fig = px.pie(
             values=age_dist.values,
@@ -329,6 +401,7 @@ def show_overview(filtered_df, full_df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
+        # Race/ethnicity pie
         race_dist = filtered_df['race_ethnicity'].value_counts()
         fig = px.pie(
             values=race_dist.values,
@@ -341,6 +414,7 @@ def show_overview(filtered_df, full_df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col3:
+        # Employment pie
         emp_dist = filtered_df['employment_status'].value_counts()
         fig = px.pie(
             values=emp_dist.values,
@@ -385,9 +459,7 @@ def show_geographic_analysis(filtered_df, full_df):
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.markdown(f"#### {selected_metric} by County (with 95% CI)",
-                   help=f"This horizontal bar chart ranks counties by average {selected_metric.lower()}. Colors indicate the score level (red=low, yellow=medium, green=high). Error bars show the 95% confidence interval - the true county average is likely within this range. Wider bars indicate more uncertainty. Numbers at the end show the exact mean score. Hover to see the sample size for each county.")
-        
+        # County ranking chart with error bars
         fig = go.Figure()
         
         fig.add_trace(go.Bar(
@@ -415,6 +487,7 @@ def show_geographic_analysis(filtered_df, full_df):
         ))
         
         fig.update_layout(
+            title=f"{selected_metric} by County (with 95% CI)",
             xaxis_title=selected_metric,
             yaxis_title="",
             plot_bgcolor='white',
@@ -438,8 +511,7 @@ def show_geographic_analysis(filtered_df, full_df):
     
     # Multi-metric heatmap
     st.markdown("---")
-    st.markdown("#### County Performance Across Multiple Metrics",
-               help="This heatmap shows how each county performs across six different well-being metrics. Colors indicate relative performance (red=below average, yellow=average, green=above average). Each metric is normalized to a 0-1 scale for comparison. Look for patterns - do some counties excel across the board? Do others struggle on multiple dimensions?")
+    st.subheader("County Performance Across Multiple Metrics")
     
     metrics_to_plot = ['LIFESAS', 'LIFEWW', 'TRUST', 'BELONGNEED', 'HOUSING1', 'BELONGCOM']
     metric_names = ['Life Sat.', 'Worthwhile', 'Trust', 'Support', 'Housing', 'Belonging']
@@ -449,7 +521,7 @@ def show_geographic_analysis(filtered_df, full_df):
     # Normalize to 0-1 scale for comparison (reverse housing concern)
     county_multi_norm = county_multi.copy()
     for col in county_multi.columns:
-        if col == 'HOUSING1':
+        if col == 'HOUSING1':  # Reverse scale for housing (lower is better)
             county_multi_norm[col] = 1 - (county_multi[col] - county_multi[col].min()) / (county_multi[col].max() - county_multi[col].min())
         else:
             county_multi_norm[col] = (county_multi[col] - county_multi[col].min()) / (county_multi[col].max() - county_multi[col].min())
@@ -465,58 +537,35 @@ def show_geographic_analysis(filtered_df, full_df):
     fig.update_layout(height=400)
     st.plotly_chart(fig, use_container_width=True)
     
-    # Zip code analysis - TREEMAP FIXED
+    # Zip code analysis
     if 'D1' in filtered_df.columns and len(filtered_df['D1'].unique()) > 1:
         st.markdown("---")
-        st.markdown("#### Zip Code Level Analysis",
-                   help="This treemap shows the top 20 zip codes by life satisfaction. The size of each rectangle represents the number of respondents from that zip code. The color indicates the average life satisfaction score (red=low, yellow=medium, green=high). Larger, greener rectangles indicate zip codes with many respondents and high satisfaction. Only zip codes with at least 10 responses are included for reliability.")
+        st.subheader("Zip Code Level Analysis")
         
         zip_stats = filtered_df.groupby('D1').agg({
             'LIFESAS': 'mean',
             'respondent_id': 'count'
         }).reset_index()
         zip_stats.columns = ['Zip Code', 'Mean Life Satisfaction', 'Count']
-        zip_stats = zip_stats[zip_stats['Count'] >= 10]
-        
-        # FIXED: Sort by Mean Life Satisfaction in descending order BEFORE taking top 20
+        zip_stats = zip_stats[zip_stats['Count'] >= 10]  # Filter for reliability
         zip_stats = zip_stats.sort_values('Mean Life Satisfaction', ascending=False).head(20)
         
-        # Add labels for display
-        zip_stats['Label'] = zip_stats.apply(
-            lambda row: f"{int(row['Zip Code'])}<br>{row['Mean Life Satisfaction']:.2f}", 
-            axis=1
-        )
-        
-        fig = px.treemap(
+        fig = px.bar(
             zip_stats,
-            path=['Label'],
-            values='Count',
+            x='Zip Code',
+            y='Mean Life Satisfaction',
             color='Mean Life Satisfaction',
             color_continuous_scale='RdYlGn',
-            hover_data={
-                'Zip Code': True,
-                'Mean Life Satisfaction': ':.2f',
-                'Count': True,
-                'Label': False
-            },
-            labels={
-                'Mean Life Satisfaction': 'Avg Life Satisfaction',
-                'Count': 'Sample Size'
-            }
+            text='Mean Life Satisfaction',
+            hover_data=['Count']
         )
-        
-        fig.update_traces(
-            textposition='middle center',
-            textfont=dict(size=11, color='white', family='Arial Black'),
-            marker=dict(line=dict(width=2, color='white'))
-        )
-        
+        fig.update_traces(texttemplate='%{text:.2f}', textposition='outside')
         fig.update_layout(
-            title="Top 20 Zip Codes by Life Satisfaction (min. 10 responses, sorted highest to lowest)",
-            height=500,
-            margin=dict(t=50, l=0, r=0, b=0)
+            title="Top 20 Zip Codes by Life Satisfaction (min. 10 responses)",
+            plot_bgcolor='white',
+            height=400,
+            showlegend=False
         )
-        
         st.plotly_chart(fig, use_container_width=True)
 
 def show_demographics(filtered_df, full_df):
@@ -524,6 +573,7 @@ def show_demographics(filtered_df, full_df):
     st.title("👥 Demographics Deep Dive")
     st.markdown("### Understanding Well-Being Across Demographic Groups")
     
+    # Select demographic dimension
     demo_dimension = st.selectbox(
         "Select Demographic Dimension",
         ["Age Group", "Race/Ethnicity", "Income", "Employment Status"]
@@ -538,14 +588,15 @@ def show_demographics(filtered_df, full_df):
     
     demo_col = dimension_map[demo_dimension]
     
-    st.markdown(f"#### Well-Being Metrics by {demo_dimension}",
-               help=f"This grouped bar chart compares average well-being scores across {demo_dimension.lower()} groups. Each group of bars represents one demographic category. The four colored bars show Life Satisfaction, Worthwhileness, Trust, and Social Support. Higher bars indicate better outcomes. Look for patterns - which groups score consistently higher or lower across metrics?")
+    # Well-being metrics by demographic
+    st.subheader(f"Well-Being Metrics by {demo_dimension}")
     
     wellbeing_metrics = ['LIFESAS', 'LIFEWW', 'TRUST', 'BELONGNEED']
     metric_names = ['Life Satisfaction', 'Worthwhileness', 'Trust', 'Social Support']
     
     demo_stats = filtered_df.groupby(demo_col)[wellbeing_metrics].mean().reset_index()
     
+    # Melt for grouped bar chart
     demo_melted = demo_stats.melt(id_vars=demo_col, var_name='Metric', value_name='Score')
     demo_melted['Metric'] = demo_melted['Metric'].map(dict(zip(wellbeing_metrics, metric_names)))
     
@@ -567,9 +618,9 @@ def show_demographics(filtered_df, full_df):
     )
     st.plotly_chart(fig, use_container_width=True)
     
+    # Distribution comparison
     st.markdown("---")
-    st.markdown(f"#### Life Satisfaction Distribution by {demo_dimension}",
-               help=f"These violin plots show the full distribution of life satisfaction scores for each {demo_dimension.lower()} group. The width of each violin shows where most people's scores fall (wider = more people). The white box inside shows the middle 50% of scores. The white dot shows the average. This gives you a more complete picture than just averages - you can see if a group has very spread out scores or if they're tightly clustered.")
+    st.subheader(f"Life Satisfaction Distribution by {demo_dimension}")
     
     fig = go.Figure()
     
@@ -593,6 +644,7 @@ def show_demographics(filtered_df, full_df):
     )
     st.plotly_chart(fig, use_container_width=True)
     
+    # Statistical comparison
     col1, col2 = st.columns(2)
     
     with col1:
@@ -606,6 +658,7 @@ def show_demographics(filtered_df, full_df):
     with col2:
         st.markdown("#### Key Insights")
         
+        # Calculate some insights
         top_group = demo_stats.loc[demo_stats['LIFESAS'].idxmax(), demo_col]
         top_score = demo_stats['LIFESAS'].max()
         bottom_group = demo_stats.loc[demo_stats['LIFESAS'].idxmin(), demo_col]
@@ -622,11 +675,12 @@ def show_demographics(filtered_df, full_df):
         </div>
         """, unsafe_allow_html=True)
     
+    # Cross-demographic analysis
     if demo_dimension != "Income":
         st.markdown("---")
-        st.markdown(f"#### {demo_dimension} × Income: Life Satisfaction Heatmap",
-                   help=f"This heatmap shows how life satisfaction varies by both {demo_dimension.lower()} AND income level. Each cell shows the average satisfaction for that combination (e.g., 25-39 year olds earning $50-75K). Red cells indicate lower satisfaction, yellow is medium, and green is higher. Look for patterns - does income matter equally for all groups? Do some groups have high satisfaction even at lower incomes?")
+        st.subheader(f"{demo_dimension} × Income: Life Satisfaction Heatmap")
         
+        # Filter out special income codes
         valid_income = filtered_df[filtered_df['income_numeric'].notna()].copy()
         
         if len(valid_income) > 0:
@@ -637,6 +691,7 @@ def show_demographics(filtered_df, full_df):
                 aggfunc='mean'
             )
             
+            # Reorder income columns
             income_order = ['<$15K', '$15-25K', '$25-35K', '$35-50K', '$50-75K', '$75-100K', '$100-150K', '$150K+']
             pivot = pivot[[col for col in income_order if col in pivot.columns]]
             
@@ -655,6 +710,7 @@ def show_wellbeing(filtered_df, full_df):
     st.title("😊 Well-Being Explorer")
     st.markdown("### Deep Dive into Quality of Life Indicators")
     
+    # Well-being metrics overview
     col1, col2, col3, col4 = st.columns(4)
     
     wellbeing_vars = {
@@ -670,9 +726,9 @@ def show_wellbeing(filtered_df, full_df):
             median_val = filtered_df[var].median()
             st.metric(f"{emoji} {label}", f"{mean_val:.2f}", f"Median: {median_val:.1f}")
     
+    # Distribution comparisons
     st.markdown("---")
-    st.markdown("#### Well-Being Score Distributions",
-               help="These four histograms show how different well-being metrics are distributed across all respondents. Each histogram shows the count of people at each score level (0-10). The red dashed line shows the average score for each metric. Compare the shapes - are people clustered around certain scores, or spread out? Do different metrics have different patterns?")
+    st.subheader("Well-Being Score Distributions")
     
     fig = make_subplots(
         rows=2, cols=2,
@@ -698,6 +754,7 @@ def show_wellbeing(filtered_df, full_df):
             row=row, col=col
         )
         
+        # Add mean line
         fig.add_vline(
             x=filtered_df[metric].mean(),
             line_dash="dash",
@@ -713,9 +770,9 @@ def show_wellbeing(filtered_df, full_df):
     fig.update_layout(height=600, plot_bgcolor='white', showlegend=False)
     st.plotly_chart(fig, use_container_width=True)
     
+    # Belonging to community
     st.markdown("---")
-    st.markdown("#### Sense of Community Belonging",
-               help="The left chart shows how many people report each level of community belonging (Very Weak to Very Strong). Colors match the strength (red=weak, blue=strong). The right chart compares belonging levels between urban/suburban and rural areas, showing percentages as stacked bars. This helps identify if certain area types have stronger or weaker community ties.")
+    st.subheader("Sense of Community Belonging")
     
     col1, col2 = st.columns(2)
     
@@ -745,6 +802,7 @@ def show_wellbeing(filtered_df, full_df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
+        # Belonging by county type
         urban_counties = ['Mecklenburg', 'Gaston', 'Cabarrus']
         filtered_df['area_type'] = filtered_df['COUNTY'].apply(
             lambda x: 'Urban/Suburban' if x in urban_counties else 'Rural/Small Town'
@@ -774,9 +832,9 @@ def show_wellbeing(filtered_df, full_df):
         )
         st.plotly_chart(fig, use_container_width=True)
     
+    # Well-being factors
     st.markdown("---")
-    st.markdown("#### Factors Associated with Life Satisfaction",
-               help="This scatter plot shows the relationship between the selected factor and life satisfaction. Each dot represents one respondent. The blue line shows the overall trend (trendline). The correlation coefficient (r) measures the strength of the relationship from -1 to +1. Positive r means as the factor increases, satisfaction tends to increase. Higher absolute values (closer to 1 or -1) indicate stronger relationships.")
+    st.subheader("Factors Associated with Life Satisfaction")
     
     factor_options = {
         'Income': 'income_numeric',
@@ -791,6 +849,7 @@ def show_wellbeing(filtered_df, full_df):
     selected_factor = st.selectbox("Select Factor to Compare", list(factor_options.keys()))
     factor_var = factor_options[selected_factor]
     
+    # Scatter plot with trendline
     valid_data = filtered_df[[factor_var, 'LIFESAS']].dropna()
     
     if len(valid_data) > 0:
@@ -804,6 +863,7 @@ def show_wellbeing(filtered_df, full_df):
             color_discrete_sequence=[COLORS['primary']]
         )
         
+        # Calculate correlation
         corr = valid_data[factor_var].corr(valid_data['LIFESAS'])
         
         fig.update_layout(
@@ -813,6 +873,7 @@ def show_wellbeing(filtered_df, full_df):
         )
         st.plotly_chart(fig, use_container_width=True)
         
+        # Interpretation
         if abs(corr) > 0.5:
             strength = "strong"
         elif abs(corr) > 0.3:
@@ -829,8 +890,8 @@ def show_regional_issues(filtered_df, full_df):
     st.title("🏠 Regional Issues & Priorities")
     st.markdown("### What Matters Most to Charlotte Area Residents")
     
-    st.markdown("#### Top Regional Priorities",
-               help="This horizontal bar chart shows the percentage of respondents who mentioned each issue as one of their top 3 priorities for the region. Longer bars (darker red) indicate more people are concerned about that issue. Since respondents could choose 3 priorities, percentages may sum to more than 100%.")
+    # Top priorities
+    st.subheader("Top Regional Priorities")
     
     priority_cols = ['REGION_1', 'REGION_2', 'REGION_3']
     priorities_data = []
@@ -876,9 +937,9 @@ def show_regional_issues(filtered_df, full_df):
     )
     st.plotly_chart(fig, use_container_width=True)
     
+    # Priorities by demographic
     st.markdown("---")
-    st.markdown("#### Priorities by Demographics",
-               help="This chart shows the top priority for each demographic group based on which issue was mentioned most often. The bar height shows how many times that top issue was mentioned. Different colors indicate different top priorities. This reveals if different groups have different concerns.")
+    st.subheader("Priorities by Demographics")
     
     demo_choice = st.selectbox(
         "Compare priorities across:",
@@ -894,6 +955,7 @@ def show_regional_issues(filtered_df, full_df):
     
     demo_col = demo_map[demo_choice]
     
+    # Calculate top priority for each demographic group
     demo_priorities = []
     for group in filtered_df[demo_col].unique():
         if pd.isna(group):
@@ -931,13 +993,14 @@ def show_regional_issues(filtered_df, full_df):
         )
         st.plotly_chart(fig, use_container_width=True)
     
+    # Housing issues
     st.markdown("---")
-    st.markdown("#### Housing Affordability Deep Dive",
-               help="Left chart: Shows average housing situation severity (0-10 scale) by county. Higher scores mean more severe problems. Right chart: Shows the top reasons residents believe contribute to housing challenges, as percentages of all respondents.")
+    st.subheader("Housing Affordability Deep Dive")
     
     col1, col2 = st.columns(2)
     
     with col1:
+        # Housing severity by county
         housing_by_county = filtered_df.groupby('COUNTY')['HOUSING1'].mean().sort_values(ascending=False)
         
         fig = go.Figure(go.Bar(
@@ -962,6 +1025,7 @@ def show_regional_issues(filtered_df, full_df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
+        # Main reasons for housing issues
         housing_reason_cols = ['HOUSING2_1', 'HOUSING2_2', 'HOUSING2_3', 'HOUSING2_4']
         housing_reasons_data = []
         
@@ -1003,9 +1067,9 @@ def show_regional_issues(filtered_df, full_df):
         )
         st.plotly_chart(fig, use_container_width=True)
     
+    # Regional outlook
     st.markdown("---")
-    st.markdown("#### Regional Outlook: Future Expectations",
-               help="Left chart: Pie chart showing the proportion of respondents who think the Charlotte region will be better, worse, same, or don't know in 3-4 years. Right chart: Shows the current life satisfaction of people grouped by their outlook. This reveals if optimistic people are currently happier.")
+    st.subheader("Regional Outlook: Future Expectations")
     
     col1, col2 = st.columns(2)
     
@@ -1030,6 +1094,7 @@ def show_regional_issues(filtered_df, full_df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
+        # Outlook by life satisfaction
         outlook_by_satisfaction = filtered_df.groupby('outlook')['LIFESAS'].mean().reindex(outlook_order)
         
         fig = go.Figure(go.Bar(
@@ -1050,9 +1115,9 @@ def show_regional_issues(filtered_df, full_df):
         )
         st.plotly_chart(fig, use_container_width=True)
     
+    # Financial well-being
     st.markdown("---")
-    st.markdown("#### Financial Well-Being",
-               help="Left chart: How people's financial situation has changed compared to one year ago. Right chart: How confident people feel about handling an unexpected $400 expense. Higher bars on the right indicate better financial security.")
+    st.subheader("Financial Well-Being")
     
     col1, col2 = st.columns(2)
     
@@ -1102,8 +1167,8 @@ def show_correlations(filtered_df, full_df):
     st.title("📈 Correlations & Statistical Insights")
     st.markdown("### Understanding Relationships in the Data")
     
-    st.markdown("#### Well-Being & Key Variables Correlation Matrix",
-               help="This correlation matrix shows how different variables relate to each other. Each cell shows the correlation coefficient from -1 to +1. Red indicates negative correlation (as one increases, the other decreases). Blue indicates positive correlation (both increase together). Darker colors indicate stronger relationships. Numbers show exact correlation values.")
+    # Correlation matrix
+    st.subheader("Well-Being & Key Variables Correlation Matrix")
     
     corr_vars = ['LIFESAS', 'LIFEWW', 'TRUST', 'BELONGNEED', 'BELONGCOM', 
                  'Q8', 'HOUSING1', 'Q11_day', 'Q11_night']
@@ -1126,16 +1191,16 @@ def show_correlations(filtered_df, full_df):
     fig.update_layout(height=600)
     st.plotly_chart(fig, use_container_width=True)
     
+    # Key correlations
     st.markdown("---")
-    st.markdown("#### Strongest Correlations with Life Satisfaction",
-               help="These charts show which variables have the strongest relationships with life satisfaction. Left (green): Variables that increase with life satisfaction. Right (red): Variables that decrease as life satisfaction increases. Longer bars indicate stronger relationships. Use this to identify key drivers of well-being.")
+    st.subheader("Strongest Correlations with Life Satisfaction")
     
     lifesas_corr = corr_data['LIFESAS'].drop('LIFESAS').sort_values(ascending=False)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("##### Positive Correlations")
+        st.markdown("#### Positive Correlations")
         pos_corr = lifesas_corr[lifesas_corr > 0].head(5)
         
         fig = go.Figure(go.Bar(
@@ -1156,7 +1221,7 @@ def show_correlations(filtered_df, full_df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
-        st.markdown("##### Negative Correlations")
+        st.markdown("#### Negative Correlations")
         neg_corr = lifesas_corr[lifesas_corr < 0].tail(5)
         
         fig = go.Figure(go.Bar(
@@ -1176,9 +1241,9 @@ def show_correlations(filtered_df, full_df):
         )
         st.plotly_chart(fig, use_container_width=True)
     
+    # Income gradient analysis
     st.markdown("---")
-    st.markdown("#### Income Gradient in Well-Being",
-               help="This line chart shows how well-being metrics change across income levels. Each colored line represents a different metric. Upward slopes indicate that higher income is associated with higher scores on that metric. Steeper slopes indicate stronger relationships. Look for which metrics show the steepest income gradients.")
+    st.subheader("Income Gradient in Well-Being")
     
     valid_income = filtered_df[filtered_df['income_numeric'].notna()].copy()
     
@@ -1191,6 +1256,7 @@ def show_correlations(filtered_df, full_df):
             'respondent_id': 'count'
         }).reset_index()
         
+        # Reorder
         income_order = ['<$15K', '$15-25K', '$25-35K', '$35-50K', '$50-75K', '$75-100K', '$100-150K', '$150K+']
         income_wellbeing['income_bracket'] = pd.Categorical(
             income_wellbeing['income_bracket'],
@@ -1229,10 +1295,9 @@ def show_correlations(filtered_df, full_df):
         )
         st.plotly_chart(fig, use_container_width=True)
     
-    # FIXED: Employment status comparison with proper spacing
+    # Employment status comparison
     st.markdown("---")
-    st.markdown("#### Well-Being by Employment Status",
-               help="These three bar charts compare employment status groups across different well-being metrics. Left: Life satisfaction levels. Middle: Confidence in handling unexpected expenses. Right: Housing concern levels. Taller bars indicate higher average scores. Compare patterns - do unemployed individuals differ across all metrics?")
+    st.subheader("Well-Being by Employment Status")
     
     employment_stats = filtered_df.groupby('employment_status').agg({
         'LIFESAS': 'mean',
@@ -1241,70 +1306,40 @@ def show_correlations(filtered_df, full_df):
         'respondent_id': 'count'
     }).reset_index()
     
-    # Create individual plots with proper spacing
-    fig1 = go.Figure(go.Bar(
-        x=employment_stats['employment_status'],
-        y=employment_stats['LIFESAS'],
-        marker_color=COLORS['primary'],
-        text=employment_stats['LIFESAS'].round(2),
-        textposition='outside',
-        name='Life Satisfaction'
-    ))
-    fig1.update_layout(
-        title="Life Satisfaction",
-        xaxis_title="Employment Status",
-        yaxis_title="Score",
-        plot_bgcolor='white',
-        height=400,
-        showlegend=False
+    fig = make_subplots(
+        rows=1, cols=3,
+        subplot_titles=['Life Satisfaction', 'Emergency Confidence', 'Housing Concern'],
+        specs=[[{"type": "bar"}, {"type": "bar"}, {"type": "bar"}]]
     )
     
-    fig2 = go.Figure(go.Bar(
-        x=employment_stats['employment_status'],
-        y=employment_stats['Q8'],
-        marker_color=COLORS['secondary'],
-        text=employment_stats['Q8'].round(2),
-        textposition='outside',
-        name='Emergency Confidence'
-    ))
-    fig2.update_layout(
-        title="Emergency Confidence",
-        xaxis_title="Employment Status",
-        yaxis_title="Score",
-        plot_bgcolor='white',
-        height=400,
-        showlegend=False
+    fig.add_trace(
+        go.Bar(x=employment_stats['employment_status'], y=employment_stats['LIFESAS'],
+               marker_color=COLORS['primary'], showlegend=False),
+        row=1, col=1
     )
     
-    fig3 = go.Figure(go.Bar(
-        x=employment_stats['employment_status'],
-        y=employment_stats['HOUSING1'],
-        marker_color=COLORS['warning'],
-        text=employment_stats['HOUSING1'].round(2),
-        textposition='outside',
-        name='Housing Concern'
-    ))
-    fig3.update_layout(
-        title="Housing Concern",
-        xaxis_title="Employment Status",
-        yaxis_title="Score",
-        plot_bgcolor='white',
-        height=400,
-        showlegend=False
+    fig.add_trace(
+        go.Bar(x=employment_stats['employment_status'], y=employment_stats['Q8'],
+               marker_color=COLORS['secondary'], showlegend=False),
+        row=1, col=2
     )
     
-    # Display in three columns
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.plotly_chart(fig1, use_container_width=True)
-    with col2:
-        st.plotly_chart(fig2, use_container_width=True)
-    with col3:
-        st.plotly_chart(fig3, use_container_width=True)
+    fig.add_trace(
+        go.Bar(x=employment_stats['employment_status'], y=employment_stats['HOUSING1'],
+               marker_color=COLORS['warning'], showlegend=False),
+        row=1, col=3
+    )
     
+    fig.update_xaxes(title_text="Employment Status", row=1, col=1)
+    fig.update_xaxes(title_text="Employment Status", row=1, col=2)
+    fig.update_xaxes(title_text="Employment Status", row=1, col=3)
+    
+    fig.update_layout(height=400, plot_bgcolor='white')
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Statistical tests
     st.markdown("---")
-    st.markdown("#### Statistical Significance Testing",
-               help="ANOVA (Analysis of Variance) tests whether groups differ significantly on life satisfaction. F-statistic: Higher values indicate larger differences between groups. P-value: Values below 0.05 indicate statistically significant differences (unlikely due to chance). Stars indicate significance level: *** (p<0.001) very strong, ** (p<0.01) strong, * (p<0.05) moderate.")
+    st.subheader("Statistical Significance Testing")
     
     st.markdown("""
     Compare life satisfaction across groups using ANOVA (Analysis of Variance).
@@ -1325,6 +1360,7 @@ def show_correlations(filtered_df, full_df):
     
     test_col = test_map[test_variable]
     
+    # Prepare data for ANOVA
     if test_col == 'area_type' and 'area_type' not in filtered_df.columns:
         urban_counties = ['Mecklenburg', 'Gaston', 'Cabarrus']
         filtered_df['area_type'] = filtered_df['COUNTY'].apply(
@@ -1339,6 +1375,7 @@ def show_correlations(filtered_df, full_df):
             group_names.append(name)
     
     if len(groups) >= 2:
+        # Perform ANOVA
         f_stat, p_value = stats.f_oneway(*groups)
         
         col1, col2, col3 = st.columns(3)
@@ -1368,5 +1405,6 @@ def show_correlations(filtered_df, full_df):
         else:
             st.info(f"The differences in life satisfaction across {test_variable} groups are not statistically significant.")
 
+# Run the app
 if __name__ == "__main__":
     main()
