@@ -1304,69 +1304,210 @@ def show_correlations(filtered_df, full_df):
     
     st.markdown("---")
     st.markdown("#### Statistical Significance Testing",
-               help="ANOVA (Analysis of Variance) tests whether groups differ significantly on life satisfaction. F-statistic: Higher values indicate larger differences between groups. P-value: Values below 0.05 indicate statistically significant differences (unlikely due to chance). Stars indicate significance level: *** (p<0.001) very strong, ** (p<0.01) strong, * (p<0.05) moderate.")
+               help="ANOVA (Analysis of Variance) tests whether groups differ significantly on the selected metric. F-statistic: Higher values indicate larger differences between groups. P-value: Values below 0.05 indicate statistically significant differences (unlikely due to chance). Stars indicate significance level: *** (p<0.001) very strong, ** (p<0.01) strong, * (p<0.05) moderate.")
     
     st.markdown("""
-    Compare life satisfaction across groups using ANOVA (Analysis of Variance).
+    Compare well-being metrics across groups using ANOVA (Analysis of Variance).
     Lower p-values (< 0.05) indicate statistically significant differences between groups.
     """)
     
-    test_variable = st.selectbox(
-        "Select grouping variable for ANOVA test:",
-        ["Age Group", "Employment Status", "County Type", "Income Level"]
-    )
+    # Two-column layout for selections
+    col_select1, col_select2 = st.columns(2)
     
+    with col_select1:
+        test_metric = st.selectbox(
+            "Select metric to test:",
+            ["Life Satisfaction", "Worthwhileness", "Trust", "Social Support", 
+             "Community Belonging", "Emergency Confidence", "Housing Concern"]
+        )
+    
+    with col_select2:
+        test_variable = st.selectbox(
+            "Select grouping variable:",
+            ["Age Group", "Employment Status", "County Type", "Income Level", "Race/Ethnicity", "County"]
+        )
+    
+    # Map metric names to column names
+    metric_map = {
+        "Life Satisfaction": "LIFESAS",
+        "Worthwhileness": "LIFEWW",
+        "Trust": "TRUST",
+        "Social Support": "BELONGNEED",
+        "Community Belonging": "BELONGCOM",
+        "Emergency Confidence": "Q8",
+        "Housing Concern": "HOUSING1"
+    }
+    
+    # Map grouping variables to column names
     test_map = {
         "Age Group": 'age_group',
         "Employment Status": 'employment_status',
         "County Type": 'area_type',
-        "Income Level": 'income_bracket'
+        "Income Level": 'income_bracket',
+        "Race/Ethnicity": 'race_ethnicity',
+        "County": 'COUNTY'
     }
     
     test_col = test_map[test_variable]
+    metric_col = metric_map[test_metric]
     
+    # Create area_type if needed
     if test_col == 'area_type' and 'area_type' not in filtered_df.columns:
         urban_counties = ['Mecklenburg', 'Gaston', 'Cabarrus']
         filtered_df['area_type'] = filtered_df['COUNTY'].apply(
             lambda x: 'Urban/Suburban' if x in urban_counties else 'Rural/Small Town'
         )
     
+    # Collect groups for ANOVA
     groups = []
     group_names = []
     for name, group in filtered_df.groupby(test_col):
         if not pd.isna(name) and len(group) > 0:
-            groups.append(group['LIFESAS'].dropna())
-            group_names.append(name)
+            group_data = group[metric_col].dropna()
+            if len(group_data) > 0:  # Only include groups with data
+                groups.append(group_data)
+                group_names.append(name)
     
     if len(groups) >= 2:
+        # Perform ANOVA
         f_stat, p_value = stats.f_oneway(*groups)
         
-        col1, col2, col3 = st.columns(3)
+        # Calculate effect size (eta-squared)
+        # Total sum of squares
+        all_data = pd.concat(groups)
+        grand_mean = all_data.mean()
+        ss_total = ((all_data - grand_mean) ** 2).sum()
+        
+        # Between-group sum of squares
+        ss_between = sum([len(g) * ((g.mean() - grand_mean) ** 2) for g in groups])
+        
+        # Eta-squared
+        eta_squared = ss_between / ss_total if ss_total > 0 else 0
+        
+        # Display results
+        col1, col2, col3, col4 = st.columns(4)
         
         with col1:
             st.metric("F-Statistic", f"{f_stat:.4f}")
         with col2:
             st.metric("P-Value", f"{p_value:.6f}")
         with col3:
+            st.metric("η² (Effect Size)", f"{eta_squared:.4f}")
+        with col4:
             if p_value < 0.001:
-                sig = "*** (p < 0.001)"
+                sig = "***"
+                sig_text = "p < 0.001"
                 color = "green"
             elif p_value < 0.01:
-                sig = "** (p < 0.01)"
+                sig = "**"
+                sig_text = "p < 0.01"
                 color = "green"
             elif p_value < 0.05:
-                sig = "* (p < 0.05)"
+                sig = "*"
+                sig_text = "p < 0.05"
                 color = "orange"
             else:
-                sig = "Not significant"
+                sig = "ns"
+                sig_text = "Not significant"
                 color = "red"
             
             st.markdown(f"<h3 style='color: {color};'>{sig}</h3>", unsafe_allow_html=True)
+            st.caption(sig_text)
         
+        # Interpretation
         if p_value < 0.05:
-            st.success(f"✓ There are statistically significant differences in life satisfaction across {test_variable} groups.")
+            effect_size_interpretation = ""
+            if eta_squared < 0.01:
+                effect_size_interpretation = "small"
+            elif eta_squared < 0.06:
+                effect_size_interpretation = "medium"
+            else:
+                effect_size_interpretation = "large"
+            
+            st.success(f"✓ There are **statistically significant** differences in {test_metric.lower()} across {test_variable.lower()} groups (p {sig_text}). The effect size is **{effect_size_interpretation}** (η² = {eta_squared:.4f}).")
         else:
-            st.info(f"The differences in life satisfaction across {test_variable} groups are not statistically significant.")
+            st.info(f"The differences in {test_metric.lower()} across {test_variable.lower()} groups are **not statistically significant** (p = {p_value:.4f}).")
+        
+        # Show group means
+        st.markdown("---")
+        st.markdown("##### Group Means and Sample Sizes")
+        
+        group_summary = []
+        for name, group_data in zip(group_names, groups):
+            group_summary.append({
+                'Group': str(name),
+                'N': len(group_data),
+                'Mean': group_data.mean(),
+                'SD': group_data.std(),
+                'Min': group_data.min(),
+                'Max': group_data.max()
+            })
+        
+        group_summary_df = pd.DataFrame(group_summary).sort_values('Mean', ascending=False)
+        
+        st.dataframe(
+            group_summary_df.style.background_gradient(
+                subset=['Mean'],
+                cmap='RdYlGn',
+                vmin=group_summary_df['Mean'].min(),
+                vmax=group_summary_df['Mean'].max()
+            ).format({
+                'Mean': '{:.2f}',
+                'SD': '{:.2f}',
+                'Min': '{:.2f}',
+                'Max': '{:.2f}'
+            }),
+            use_container_width=True
+        )
+        
+        # Visualization of group means
+        st.markdown("##### Visual Comparison")
+        
+        fig = go.Figure()
+        
+        # Sort by mean for better visualization
+        sorted_summary = group_summary_df.sort_values('Mean', ascending=True)
+        
+        fig.add_trace(go.Bar(
+            y=sorted_summary['Group'],
+            x=sorted_summary['Mean'],
+            orientation='h',
+            marker=dict(
+                color=sorted_summary['Mean'],
+                colorscale='RdYlGn',
+                showscale=True,
+                colorbar=dict(title=test_metric)
+            ),
+            text=sorted_summary['Mean'].round(2),
+            textposition='outside',
+            error_x=dict(
+                type='data',
+                array=1.96 * sorted_summary['SD'] / np.sqrt(sorted_summary['N']),  # 95% CI
+                color='rgba(0,0,0,0.3)',
+                thickness=2
+            ),
+            hovertemplate='<b>%{y}</b><br>' +
+                         test_metric + ': %{x:.2f}<br>' +
+                         'N: %{customdata}<extra></extra>',
+            customdata=sorted_summary['N']
+        ))
+        
+        chart_title = f"{test_metric} by {test_variable} (with 95% Confidence Intervals)"
+        x_axis_title = f"Mean {test_metric}"
+        
+        fig.update_layout(
+            title=chart_title,
+            xaxis_title=x_axis_title,
+            yaxis_title=test_variable,
+            plot_bgcolor='white',
+            height=400,
+            showlegend=False
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+    
+    else:
+        st.warning(f"Not enough groups with data to perform ANOVA. Need at least 2 groups with valid {test_metric.lower()} scores.")
 
 if __name__ == "__main__":
     main()
