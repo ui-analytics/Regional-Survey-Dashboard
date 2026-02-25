@@ -11,6 +11,8 @@ from plotly.subplots import make_subplots
 import numpy as np
 from scipy import stats
 
+import components.geographic as cg
+
 # Page configuration
 st.set_page_config(
     page_title="State of the Region Survey - Well-Being Dashboard",
@@ -382,46 +384,35 @@ def show_geographic_analysis(filtered_df, full_df):
     county_stats['CI_lower'] = county_stats['Mean'] - 1.96 * (county_stats['Std Dev'] / np.sqrt(county_stats['Count']))
     county_stats['CI_upper'] = county_stats['Mean'] + 1.96 * (county_stats['Std Dev'] / np.sqrt(county_stats['Count']))
     
-    col1, col2 = st.columns([2, 1])
+    # clean up the county name
+    county_stats["county_norm"] = (county_stats["County"].astype(str)
+                                       .str.replace(" County", "", regex=False)
+                                       .str.strip()
+                                       .str.upper()
+                                      )
     
+    col1, col2 = st.columns([3.3, 1])
     with col1:
-        st.markdown(f"#### {selected_metric} by County (with 95% CI)",
-                   help=f"This horizontal bar chart ranks counties by average {selected_metric.lower()}. Colors indicate the score level (red=low, yellow=medium, green=high). Error bars show the 95% confidence interval - the true county average is likely within this range. Wider bars indicate more uncertainty. Numbers at the end show the exact mean score. Hover to see the sample size for each county.")
-        
-        fig = go.Figure()
-        
-        fig.add_trace(go.Bar(
-            x=county_stats['Mean'],
-            y=county_stats['County'],
-            orientation='h',
-            marker=dict(
-                color=county_stats['Mean'],
-                colorscale='RdYlGn',
-                showscale=True,
-                colorbar=dict(title=selected_metric)
-            ),
-            text=county_stats['Mean'].round(2),
-            textposition='outside',
-            error_x=dict(
-                type='data',
-                symmetric=False,
-                array=county_stats['CI_upper'] - county_stats['Mean'],
-                arrayminus=county_stats['Mean'] - county_stats['CI_lower'],
-                color='rgba(0,0,0,0.3)',
-                thickness=1.5
-            ),
-            hovertemplate='<b>%{y}</b><br>Mean: %{x:.2f}<br>N: %{customdata}<extra></extra>',
-            customdata=county_stats['N']
-        ))
-        
-        fig.update_layout(
-            xaxis_title=selected_metric,
-            yaxis_title="",
-            plot_bgcolor='white',
-            height=500,
-            showlegend=False
+        # create map of 14 county region
+        st.markdown(
+            f"#### {selected_metric} County Map",
+            help="Choropleth map of county averages."
         )
-        st.plotly_chart(fig, use_container_width=True)
+        
+        # load geojson file
+        geojson = cg.load_geojson("data/counties.geojson")
+        # associate name field to geoid 
+        name_to_geoid = cg.build_geo_name_to_geoid(name_field="name",
+                                                   geoid_field="geoid", 
+                                                   geojson_data=geojson)
+        # create geoid in count state data frame
+        county_stats["geoid"] = county_stats["county_norm"].map(name_to_geoid)
+        
+        # make a choropleth map in folium
+        m = cg.make_choropleth_map(county_stats, geojson, selected_metric)
+        # render map
+        cg.render_folium_html(m,height=530)
+        
     
     with col2:
         st.markdown("#### County Rankings")
@@ -432,9 +423,49 @@ def show_geographic_analysis(filtered_df, full_df):
                 vmin=county_stats['Mean'].min(),
                 vmax=county_stats['Mean'].max()
             ).format({'Mean': '{:.2f}'}),
-            height=500,
-            use_container_width=True
+            height=530,
+            use_container_width=True,
+            hide_index=True
         )
+        
+    
+    st.markdown(f"#### {selected_metric} by County (with 95% CI)",
+                help=f"This horizontal bar chart ranks counties by average {selected_metric.lower()}. Colors indicate the score level (red=low, yellow=medium, green=high). Error bars show the 95% confidence interval - the true county average is likely within this range. Wider bars indicate more uncertainty. Numbers at the end show the exact mean score. Hover to see the sample size for each county.")
+    
+    fig = go.Figure()
+    
+    fig.add_trace(go.Bar(
+        x=county_stats['Mean'],
+        y=county_stats['County'],
+        orientation='h',
+        marker=dict(
+            color=county_stats['Mean'],
+            colorscale='RdYlGn',
+            showscale=True,
+            colorbar=dict(title=selected_metric)
+        ),
+        text=county_stats['Mean'].round(2),
+        textposition='outside',
+        error_x=dict(
+            type='data',
+            symmetric=False,
+            array=county_stats['CI_upper'] - county_stats['Mean'],
+            arrayminus=county_stats['Mean'] - county_stats['CI_lower'],
+            color='rgba(0,0,0,0.3)',
+            thickness=1.5
+        ),
+        hovertemplate='<b>%{y}</b><br>Mean: %{x:.2f}<br>N: %{customdata}<extra></extra>',
+        customdata=county_stats['N']
+    ))
+    
+    fig.update_layout(
+        xaxis_title=selected_metric,
+        yaxis_title="",
+        plot_bgcolor='white',
+        height=500,
+        showlegend=False
+    )
+    st.plotly_chart(fig, use_container_width=True)
     
     # Multi-metric heatmap
     st.markdown("---")
