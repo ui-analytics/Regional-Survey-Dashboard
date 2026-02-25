@@ -14,7 +14,7 @@ def make_choropleth_map(stats: pd.DataFrame, geojson: dict, selected_metric: str
     m = folium.Map(
         location=[35.24, -80.84], 
         zoom_start=9, 
-        tiles="CartoDB positron",
+        tiles="Cartodb dark_matter",
         zoom_control=False,
         scrollWheelZoom=False,
         doubleClickZoom=False,
@@ -78,8 +78,8 @@ def make_choropleth_map(stats: pd.DataFrame, geojson: dict, selected_metric: str
     def county_highlight_style(feature):
         return {
             "weight": 3,
-            "color": "black",
-            "fillOpacity": 0.05,
+            "fillColor": "orange",
+            "fillOpacity": 0.5,
         }
     
     # Add a crisp outline + hover tooltip
